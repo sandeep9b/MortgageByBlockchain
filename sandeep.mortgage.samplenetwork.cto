@@ -1,0 +1,689 @@
+/* Sandeep's mortgage testing sample network */
+namespace sandeep.mortgage.samplenetwork
+asset Document identified by documentID {
+  o String documentID
+  o documentType docType
+  --> Borrower bwr
+  --> DocOwner downr
+  --> LoanObject lobject
+}
+asset LoanObject identified by loanID {
+  o String loanID
+  o Integer loanNumber
+  o Boolean isDisbursed default = false
+  --> Borrower borrowers
+  --> LenderAssociate officer
+  --> LenderAssociate processor optional
+  --> LenderAssociate underwriter optional
+  --> LenderAssociate closer optional
+  --> LenderAssociate owner
+}
+concept Address {
+  o String street default = "9991 Warford Street"
+  o Integer unit optional
+  o String city default = "Dawson"
+  o String state default = "IA"
+  o String zip default = "50066"
+  o String country default = "United States"
+}
+concept DetailAddress extends Address {
+  o addressType addrTyp default = "Present"
+}
+concept CurrentEmployment extends DetailAddress {
+  o String employerName default = "Test Employer"
+  o Integer phoneNumber default = 1111111111
+  o String positionOrTitle default = "Test Position"
+  o DateTime startDate default = "2015-01-01"
+  o Double jobTenureInYears default = 0.0
+  o Boolean employedByFamilyMember default = false
+  o Boolean bussOwnerOrSelfEmployed default = false
+  o Boolean ownershipLessThan25Percent default = false
+  o Double monthlyIncomeForBussOrSelfEmpl default = 0.0
+  o Double base default = 0.0
+  o Double overtime default = 0.0
+  o Double bonus default = 0.0
+  o Double commission default = 0.0
+  o Double militaryEntl default = 0.0
+  o Double other default = 0.0
+  o Double monthlyIncomeForEmpl default = 0.0
+}
+concept PreviousEmployment extends DetailAddress {
+  o String employerName default = "Test Employer"
+  o String positionOrTitle default = "Test Position"
+  o DateTime startDate default = "2015-01-01"
+  o DateTime endDate default = "2019-01-01"
+  o Boolean bussOwnerOrSelfEmployed default = false
+  o Double grossMonthlyIncome default = 0.0
+}
+concept IncomeFromOtherSources {
+  o IncSourceType IncomeSourceType default = "CapitalGain"
+  o Double monthlySecondaryIncome default = 0.00
+}
+concept Asset {
+  o assetType astType default = "Savings"
+  o String financialInstitution default = "Test Asset Bank"
+  o Integer accountNumberAst default = 3333333333
+  o Double cashOrMarketValue default = 0.00
+}
+concept SecondaryAsset {
+  o assetType astType default = "Savings"
+  o Double cashOrMarketValue default = 0.00
+}
+concept Gifts {
+  o gftType giftType default = "CashGift"
+  o Boolean isDeposited default = false
+  o giftSource gftSource default = "Relative"
+  o Double cashValue default = 0.00
+}
+concept Liability {
+  o liabilityType liabType default = "Mortgage"
+  o String companyName default = "Test Liability Bank"
+  o Integer accountNumberLiab default = 2222222222
+  o Double unpaidBalance default = 0.00
+  o Boolean toBePaidOff default = false
+  o Double monthlyPayment default = 0.00
+  o LienPos lienPosition optional
+}
+concept SecondaryLiability {
+  o liabilityType liabType default = "Mortgage"
+  o Double monthlyPayment default = 0.00
+}
+concept PropertyYouOwn extends DetailAddress {
+  o Double propertyValue default = 0.00
+  o AssetStatus asstStat default = "PendingSale"
+  o Double monthlyExpenseOnAsset default = 0.00
+  o Double monthlyRentalIncome optional /* For investment properties only */
+  o Double netMonthlyRentalIncome optional /* For investment properties only  - here we are calculating as 8% of monthly rental income*/
+  o Boolean isMortgageOnProperty default = false
+  o Creditor[] creditors optional
+}
+concept Creditor {
+  o String companyName default = "Test Creditor Bank"
+  o Integer accountNumberLiab default = 3333333333
+  o Double monthlyPayment default = 0.00
+  o Double unpaidBalance default = 0.00
+  o Boolean toBePaidOff default = false
+  o LoanType loanTyp default = "Conventional"
+  o Double creditLimit optional /* For HELOC properties only */
+}
+concept OtherMortgageCreditor {
+  o String companyName default = "Test Creditor Bank"
+  o LienPos lienPosition default = "FirstLien"
+  o Double monthlyPayment default = 0.00
+  o Double loanToBeDrawn default = 0.00
+  o Double creditLimit optional /* For HELOC properties only */
+}
+concept AltNames {
+  o String altFirstName default = ""
+  o String altMiddleName default = ""
+  o String altLastName default = ""
+  o String altSuffix default = ""
+}
+concept othBorrowers {
+  o String othFirstName default = ""
+  o String othMiddleName default = ""
+  o String othLastName default = ""
+  o String othSuffix default = ""
+}
+concept Dependents {
+  o Integer dependentAge default = 0
+}
+participant Borrower identified by borrowerID {
+  o String borrowerID default = "11111"
+  o String borrowerFirstName default = "Alice"
+  o String borrowerMiddleName default = ""
+  o String borrowerLastName default = "Firstimer"
+  o String borrowerSuffix default = ""
+  o AltNames[] alternateNames optional
+  o Integer social default = 991919991
+  o DateTime dateOfBirth default = "1970-01-01"
+  o CitizType citizenship default = "USCitizen"
+  o Boolean jointCredit default = false
+  o Integer totalNumberOfBorrowers default = 1
+  o othBorrowers[] otherBrwr optional
+  o maritalStatus mariStat default = "Unmarried"
+  o Integer numberOfDependents default = 0
+  o Dependents[] dependnt optional
+  o Integer homePhoneNumber default = 9876543210
+  o Integer cellPhoneNumber default = 9876543210
+  o Integer workPhoneNumber default = 9876543210
+  o Integer workPhoneExtn default = 1234
+  /* need to incorporate regular expression in phone numbers*/
+  o String email default = "test@test.com"
+  /* need to incorporate regular expression in email*/
+  o DetailAddress presentAddress
+  o Integer noOfYears default = 5
+  o DwellingType dwType default = "Own"
+  o Boolean lessThan2YrsAtCurrentAddress default = false
+  o DetailAddress formerAddress optional
+  o Integer noOfYearsFormerAddress optional
+  o DwellingType dwTypeFormerAddress optional
+  o Boolean isMailingAddrDiffFromCurrentAddr default = false
+  o DetailAddress mailingAddress optional
+  o Boolean militaryService default = false
+  o MiltServiceTyp militaryServiceType optional
+  o DateTime projExpDateOfServiceOrTour optional
+  o CurrentEmployment[] currempl optional
+  o PreviousEmployment prevEmpl optional
+  o IncomeFromOtherSources[] secondaryIncomeArray optional
+  o Double totalOtherSourcesIncome optional
+  o Asset[] assets optional
+  o Double TotalPrimaryAssetValue optional
+  o SecondaryAsset[] sndAssets optional
+  o Double TotalSecondaryAssetValue optional
+  o Liability[] liabilities optional
+  o SecondaryLiability[] sndLiabilities optional
+  o PropertyYouOwn[] ownedProperties optional
+  o Double loanAmount default = 200000.00
+  o LoanPurpType loanPurpose default = "Refinance"
+  o String otherLoanPurpose optional
+  o DetailAddress subjectPropertyAddress
+  o Integer noOfUnits default = 1
+  o Double propertyValue default = 280000.00
+  o OccuType occoupancyType default = "PrimaryResidence"
+  o Boolean mixedUseProperty default = false
+  o Boolean manufacturedHome default = false
+  o OtherMortgageCreditor[] newMortOnSameProp optional
+  o Double expectedMonthlyRentalIncome optional /* For purchase primary residence 2-4 units or investment property only */
+  o Double expectedNetMonthlyRentalIncome optional /* For purchase primary residence 2-4 units or investment property only */
+  o Gifts[] gifts optional
+  o Boolean Q5A1 default = true
+  o Boolean Q5A11 optional
+  o String Q5A12 optional
+  o String Q5A13 optional
+  o Boolean Q5A2 default = false
+  o Boolean Q5A3 default = false
+  o Double Q5A31 optional
+  o Boolean Q5A41 default = false
+  o Boolean Q5A42 default = false
+  o Boolean Q5A5 default = false
+  o Boolean Q5B1 default = false
+  o Boolean Q5B2 default = false
+  o Boolean Q5B3 default = false
+  o Boolean Q5B4 default = false
+  o Boolean Q5B5 default = false
+  o Boolean Q5B6 default = false
+  o Boolean Q5B7 default = false
+  o Boolean Q5B8 default = false
+  o BankruptcyType Q5B81 optional
+  o EthenType ethenicityType default = "NotHispanicOrLatino"
+  o HisLaType hispanicLatinoType optional
+  o String otherHispanicLatinoType optional
+  o GenType genderType default = "Male"
+  o RacType receType default = "Asian"
+  o AsiType asianType optional
+  o String otherAsianType optional
+  o HawType hawaiianType optional
+  o String otherHawaiianType optional
+  o Boolean ethenicityByVisualOrSurname default = false
+  o Boolean genderByVisualOrSurname default = false
+  o Boolean raceByVisualOrSurname default = false
+  o DemographicChann demographicChannel default = "FaceToFace"
+}
+participant LenderAssociate identified by AssociateID {
+  o String AssociateID default = "22222"
+  o AssociateCat associateCategory default = "LoanOfficer"
+  o String organizationName default = "Test Lender"
+  o DetailAddress originatorOrgAddress
+  o Integer OrganizationNMLSid default = 33333
+  o Integer OrganizationStateNMLSid default = 44444
+  o String AssociateName default = "Test Associate"
+  o Integer OriginatorNMLSid default = 55555 optional
+  o Integer OriginatorStateNMLSid default = 66666 optional
+  o String AssociateEMail default = "test@lender.com"
+  o Integer AssociatePhone default = 7777777777
+}
+participant DocOwner identified by docOwnerID {
+  o String docOwnerID default = "11111"
+  o DocOwnerTy docOwnerType default = "Borrower"
+}
+transaction createTestBorrower {
+  o String Bid
+}
+transaction createBorrower {
+  o String Bid
+  o String borrowerFirstName default = "Alice"
+  o String borrowerMiddleName default = ""
+  o String borrowerLastName default = "Firstimer"
+  o String borrowerSuffix default = ""
+  o Integer social default = 991919991
+  o DateTime dateOfBirth default = "1970-01-01"
+  o CitizType citizenship default = "USCitizen"
+  o Boolean jointCredit default = false
+  o Integer totalNumberOfBorrowers default = 1
+  o maritalStatus mariStat default = "Unmarried"
+  o Integer numberOfDependents default = 0
+  o Integer homePhoneNumber default = 9876543210
+  o Integer cellPhoneNumber default = 9876543210
+  o Integer workPhoneNumber default = 9876543210
+  o Integer workPhoneExtn default = 1234
+  /* need to incorporate regular expression in phone numbers*/
+  o String email default = "test@test.com"
+  /* need to incorporate regular expression in email*/
+  o DetailAddress presentAddress
+  o Integer noOfYears default = 5
+  o DwellingType dwType default = "Own"
+  o Boolean lessThan2YrsAtCurrentAddress default = false
+  o Boolean isMailingAddrDiffFromCurrentAddr default = false
+  o Boolean militaryService default = false
+  o Double loanAmount default = 200000.00
+  o LoanPurpType loanPurpose default = "Refinance"
+  o DetailAddress subjectPropertyAddress
+  o Integer noOfUnits default = 1
+  o Double propertyValue default = 280000.00
+  o OccuType occoupancyType default = "PrimaryResidence"
+  o Boolean mixedUseProperty default = false
+  o Boolean manufacturedHome default = false
+  o Boolean Q5A1 default = true
+  o Boolean Q5A2 default = false
+  o Boolean Q5A3 default = false
+  o Boolean Q5A41 default = false
+  o Boolean Q5A42 default = false
+  o Boolean Q5A5 default = false
+  o Boolean Q5B1 default = false
+  o Boolean Q5B2 default = false
+  o Boolean Q5B3 default = false
+  o Boolean Q5B4 default = false
+  o Boolean Q5B5 default = false
+  o Boolean Q5B6 default = false
+  o Boolean Q5B7 default = false
+  o Boolean Q5B8 default = false
+  o EthenType ethenicityType default = "NotHispanicOrLatino"
+  o GenType genderType default = "Male"
+  o RacType receType default = "Asian"
+  o Boolean ethenicityByVisualOrSurname default = false
+  o Boolean genderByVisualOrSurname default = false
+  o Boolean raceByVisualOrSurname default = false
+  o DemographicChann demographicChannel default = "FaceToFace"
+}
+transaction addOtherIncomeToExistingBorrower {
+  --> Borrower borrowerID
+  o IncSourceType incomeSource default = "Disability"
+  o Double monthlyIncome default = 0.00
+}
+transaction addAssetToExistingBorrower {
+  --> Borrower borrowerID
+  o assetType astType default = "Checking"
+  o String financialInstitution default = "Test Asset Bank"
+  o Integer accountNumberAst default = 3333333333
+  o Double cashOrMarketValue default = 0.00
+}
+transaction addSecondaryAssetToExistingBorrower {
+  --> Borrower borrowerID
+  o assetType astType default = "Checking"
+  o Double cashOrMarketValue default = 0.00
+}
+transaction addLiabilityToExistingBorrower {
+  --> Borrower borrowerID
+  o liabilityType liabType default = "Mortgage"
+  o String companyName default = "Test Liability Bank"
+  o Integer accountNumberLiab default = 2222222222
+  o Double unpaidBalance default = 0.00
+  o Boolean toBePaidOff default = false
+  o Double monthlyPayment default = 0.00
+  o LienPos lienPosition optional
+}
+transaction addSecondaryLiabilityToExistingBorrower {
+  --> Borrower borrowerID
+  o liabilityType liabType default = "Mortgage"
+  o Double monthlyPayment default = 0.00
+}
+transaction addOwnedPropertiesToExistingBorrower {
+  --> Borrower borrowerID
+  o String street default = "4321 Test Employer Street"
+  o Integer unit default = 123
+  o String city default = "Irving"
+  o String state default = "TX"
+  o String zip default = "75063"
+  o String country default = "United States"
+  o addressType addrTyp default = "AssetProperty"
+  o Double propertyValue default = 0.00
+  o AssetStatus asstStat default = "PendingSale"
+  o Double monthlyExpenseOnAsset default = 0.00
+  o Double monthlyRentalIncome optional /* For investment properties only */
+  o Double netMonthlyRentalIncome optional /* For investment properties only  - here we are calculating as 8% of monthly rental income*/
+  o Boolean isMortgageOnProperty optional
+  o Creditor[] company optional
+}
+transaction addNewMortCreditorOnSameProperty {
+  --> Borrower borrowerID
+  o String companyName default = "Test Creditor Bank"
+  o LienPos lienPosition default = "FirstLien"
+  o Double monthlyPayment default = 0.00
+  o Double loanToBeDrawn default = 0.00
+  o Double creditLimit optional
+}
+transaction addGiftsToExistingBorrower {
+  --> Borrower borrowerID
+  o gftType giftType default = "CashGift"
+  o Boolean isDeposited default = false
+  o giftSource gftSource default = "Relative"
+  o Double cashValue default = 0.00
+}
+transaction addAlternateNamesToExistingBorrower {
+  --> Borrower borrowerID
+  o String altFirstName default = ""
+  o String altMiddleName default = ""
+  o String altLastName default = ""
+  o String altSuffix default = ""
+}
+transaction addOtherBorrowerName {
+  --> Borrower borrowerID
+  o String othFirstName default = ""
+  o String othMiddleName default = ""
+  o String othLastName default = ""
+  o String othSuffix default = ""
+}
+transaction addDependentToExistingBorrower {
+  --> Borrower borrowerID
+  o Integer dependentAge default = 0
+}
+transaction addFormerAddressToExistingBorrower {
+  --> Borrower borrowerID
+  o String street default = "9991 Warford Street"
+  o String city default = "Dawson"
+  o String state default = "IA"
+  o String zip default = "50066"
+  o String country default = "United States"
+  o addressType addrTyp default = "Former"
+  o Integer noOfYearsFormerAddress default = 0
+  o DwellingType dwTypeFormerAddress default = "Rent"
+}
+transaction addDiffMailingAddressToExistingBorrower {
+  --> Borrower borrowerID
+  o String street default = "9991 Warford Street"
+  o String city default = "Dawson"
+  o String state default = "IA"
+  o String zip default = "50066"
+  o String country default = "United States"
+  o addressType addrTyp default = "Mailing"
+}
+transaction addMilitaryServiceToExistingBorrower {
+  --> Borrower borrowerID
+  o MiltServiceTyp militaryServiceType default = "Serving"
+  o DateTime projExpDateOfServiceOrTour default = "2025-01-01"
+}
+transaction addCurrentEmploymentToExistingBorrower {
+  --> Borrower borrowerID
+  o String street default = "4321 Test Employer Street"
+  o String city default = "Irving"
+  o String state default = "TX"
+  o String zip default = "75063"
+  o String country default = "United States"
+  o addressType addrTyp default = "CurrentEmployer"
+  o String employerName default = "Test Employer"
+  o Integer phoneNumber default = 1111111111
+  o String positionOrTitle default = "Test Position"
+  o DateTime startDate default = "2015-01-01"
+  o Double jobTenureInYears default = 0.0
+  o Boolean employedByFamilyMember default = false
+  o Boolean bussOwnerOrSelfEmployed default = false
+  o Boolean ownershipLessThan25Percent default = false
+  o Double monthlyIncomeForBussOrSelfEmpl default = 0.0
+  o Double base default = 0.0
+  o Double overtime default = 0.0
+  o Double bonus default = 0.0
+  o Double commission default = 0.0
+  o Double militaryEntl default = 0.0
+  o Double other default = 0.0
+}
+transaction addPreviousEmploymentToExistingBorrower {
+  --> Borrower borrowerID
+  o String street default = "4321 Test Employer Street"
+  o String city default = "Irving"
+  o String state default = "TX"
+  o String zip default = "75063"
+  o String country default = "United States"
+  o addressType addrTyp default = "PreviousEmployer"
+  o String employerName default = "Test Employer"
+  o String positionOrTitle default = "Test Position"
+  o DateTime startDate default = "2015-01-01"
+  o DateTime endDate default = "2019-01-01"
+  o Boolean bussOwnerOrSelfEmployed default = false
+  o Double grossMonthlyIncome default = 0.0
+}
+transaction createLenderAssociate {
+  o String LAid
+}
+transaction createDocOwner {
+  o String DOid
+}
+transaction loanObjectAddition {
+  o String loanObjId
+  --> Borrower borrowers
+  --> LenderAssociate officer
+  --> LenderAssociate processor optional
+  --> LenderAssociate underwriter optional
+  --> LenderAssociate closer optional
+  --> LenderAssociate owner
+}
+transaction documentAddition {
+  o String Docid
+}
+transaction documentTransfer {
+  --> Document docToBeTransferred
+  --> DocOwner sender
+  --> DocOwner receipient
+}
+transaction loanObjectTransfer {
+  --> LoanObject generatedLoan
+  --> LenderAssociate From
+  --> LenderAssociate To
+}
+enum documentType {
+  o SocialCard
+  o UtilityBill
+  o Paystub
+  o DriverLicense
+  o Passport
+  o LoanApplication
+  o Disclosure
+  o LoanEstimate
+  o ClosingDisclosure
+}
+enum maritalStatus {
+  o Married
+  o Unmarried
+  o Separated
+  o Widowed
+}
+enum addressType {
+  o Present
+  o Mailing
+  o SubjectProperty
+  o CurrentEmployer
+  o PreviousEmployer
+  o AssetProperty
+  o Lender
+  o Former
+}
+enum DwellingType {
+  o Own
+  o Rent
+  o NoPrimaryHousingExpense
+}
+enum IncSourceType {
+  o Alimony
+  o AutoAllowance
+  o Boarder
+  o CapitalGain
+  o ChildSupport
+  o Disability
+  o FosterCare
+  o Housing
+  o InterestDividend
+  o MortgageCreditCertificate
+  o MortgageDifferentialPayments
+  o NotesReceivable
+  o PublicAssistance
+  o Retirement
+  o RoyaltyPayments
+  o SeparateMaintenance
+  o SocialSecurity
+  o Trust
+  o UnemploymentBenefits
+  o VACompensation
+  o Other
+}
+enum assetType {
+  o Checking
+  o Savings
+  o MoneyMarket
+  o CertificateOfDeposit
+  o MutualFund
+  o Stocks
+  o StockOptions
+  o Bonds
+  o Retirement_401K_IRA
+  o BridgeLoanProceeds
+  o IndividualDevelopmentAccount
+  o TrustAccount
+  o CashValueOfLifeInsurance
+  o Other
+  o EarnestMoney
+  o ProceedsFromSaleOfNonRealEstateAsset
+  o ProceedsFromRealEstatePropertyToBeSoldOnOrBeforeClosing
+  o SweatEquity
+  o EmployerAssistance
+  o RentCredit
+  o SecuredBorrowedFunds
+  o TradeEquity
+  o UnsecuredBorrowedFunds
+}
+enum gftType {
+  o CashGift
+  o GiftOfEquity
+  o Grant
+}
+enum giftSource {
+  o Relative
+  o UnmarriedPartner
+  o Employer
+  o ReligiousNonProfit
+  o CommunityNonProfit
+  o FederalAgency
+  o StateAgency
+  o LocalAgency
+  o Other
+}
+enum liabilityType {
+  o Revolving
+  o CarLoanInstallment
+  o StudentLoanInstallment
+  o PersonalLoanInstallment
+  o Lease
+  o Mortgage
+  o Alimony
+  o ChildSupport
+  o SeparateMaintenance
+  o JobRelatedExpenses
+  o Other
+}
+enum AssetStatus {
+  o Sold
+  o PendingSale
+  o Retained
+  o OnRent
+}
+enum LoanType {
+  o Conventional
+  o FHA
+  o VA
+  o USDA
+  o NonAgency
+  o Other
+}
+enum LoanPurpType {
+  o Purchase
+  o Refinance
+  o Other
+}
+enum OccuType {
+  o PrimaryResidence
+  o SecondHome
+  o InvestmentProperty
+  o FHASecondaryResidence
+}
+enum LienPos {
+  o FirstLien
+  o SubordinateLien
+}
+enum AssociateCat {
+  o LoanOfficer
+  o LoanProcessor
+  o LoanUnderwriter
+  o LoanCloser
+}
+enum DocOwnerTy {
+  o Borrower
+  o Lender
+  o CreditVendor
+  o AppraisalVendor
+  o TitleVendor
+  o MortgageInsuranceVendor
+}
+enum EthenType {
+  o HispanicOrLatino
+  o NotHispanicOrLatino
+  o IdoNotWishToProvideInfo
+}
+enum HisLaType {
+  o Mexican
+  o PuertoRican
+  o Cuban
+  o Other
+}
+enum GenType {
+  o Male
+  o Female
+  o IdoNotWishToProvideInfo
+}
+enum RacType {
+  o AmericanIndianOrAlaskaNative
+  o Asian
+  o BlackOrAfricanAmerican
+  o NativeHawaiianOrOtherPacificIslander
+  o White
+  o IdoNotWishToProvideInfo
+}
+enum AsiType {
+  o AsianIndian
+  o Chinese
+  o Filipino
+  o Japanese
+  o Korean
+  o Vietnamese
+  o Other
+}
+enum HawType {
+  o Native
+  o GuamanianOrChamorro
+  o Samoan
+  o Other
+}
+enum DemographicChann {
+  o FaceToFace
+  o TelephoneInterview
+  o FaxOrMail
+  o EmailOrInternet
+}
+enum CitizType {
+  o USCitizen
+  o PermanentResidentAlien
+  o NonPermanentResidentAlien
+}
+enum MiltServiceTyp {
+  o Serving
+  o Retired
+  o Separated
+  o Discharged
+  o Reserve
+  o NationalGuard
+  o SurvivingSpouse
+}
+enum BankruptcyType {
+  o Chapter7
+  o Chapter11
+  o Chapter12
+  o Chapter13
+}
